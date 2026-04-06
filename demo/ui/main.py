@@ -39,14 +39,17 @@ def on_load(e: me.LoadEvent):  # pylint: disable=unused-argument
         state.current_conversation_id = ''
 
     # check if the API key is set in the environment
-    # and if the user is using Vertex AI
+    # and if the user is using Vertex AI or MiniMax Anthropic-compatible API
     uses_vertex_ai = (
         os.getenv('GOOGLE_GENAI_USE_VERTEXAI', '').upper() == 'TRUE'
     )
+    uses_anthropic_api = bool(os.getenv('ANTHROPIC_API_KEY', ''))
     api_key = os.getenv('GOOGLE_API_KEY', '')
 
     if uses_vertex_ai:
         state.uses_vertex_ai = True
+    elif uses_anthropic_api:
+        state.api_key = os.getenv('ANTHROPIC_API_KEY', '')
     elif api_key:
         state.api_key = api_key
     else:

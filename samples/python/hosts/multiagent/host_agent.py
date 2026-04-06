@@ -5,6 +5,7 @@ import os
 import uuid
 
 import httpx
+import litellm
 
 from a2a.client import A2ACardResolver, ClientConfig, ClientFactory
 from a2a.types import (
@@ -89,11 +90,23 @@ class HostAgent:
         self.agents = '\n'.join(agent_info)
 
     def create_agent(self) -> Agent:
+        # Set up MiniMax Anthropic-compatible API credentials via litellm
+        api_key = os.environ.get('ANTHROPIC_API_KEY', '')
+        api_base = os.environ.get('ANTHROPIC_API_BASE', '')
+
         LITELLM_MODEL = os.getenv(
-            'LITELLM_MODEL', 'gemini/gemini-2.0-flash-001'
+            'LITELLM_MODEL', 'anthropic/MiniMax-M2.7'
         )
+
+        # Build kwargs for LiteLlm - api_base and api_key go here
+        llm_kwargs = {}
+        if api_base:
+            llm_kwargs['api_base'] = api_base
+        if api_key:
+            llm_kwargs['api_key'] = api_key
+
         return Agent(
-            model=LiteLlm(model=LITELLM_MODEL),
+            model=LiteLlm(model=LITELLM_MODEL, **llm_kwargs),
             name='host_agent',
             instruction=self.root_instruction,
             before_model_callback=self.before_model_callback,

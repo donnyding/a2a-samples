@@ -72,10 +72,17 @@ class ADKHostManager(ApplicationManager):
             uses_vertex_ai
             or os.environ.get('GOOGLE_GENAI_USE_VERTEXAI', '').upper() == 'TRUE'
         )
+        self.uses_anthropic_api = bool(os.environ.get('ANTHROPIC_API_KEY', ''))
 
         # Set environment variables based on auth method
         if self.uses_vertex_ai:
             os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'TRUE'
+
+        elif self.uses_anthropic_api:
+            # Use MiniMax Anthropic-compatible API
+            os.environ['ANTHROPIC_API_KEY'] = os.environ.get('ANTHROPIC_API_KEY', '')
+            if os.environ.get('ANTHROPIC_API_BASE'):
+                os.environ['ANTHROPIC_API_BASE'] = os.environ.get('ANTHROPIC_API_BASE', '')
 
         elif self.api_key:
             # Use API key authentication
