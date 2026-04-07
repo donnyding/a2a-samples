@@ -131,6 +131,8 @@ can use to delegate the task.
 
 Execution:
 - For actionable requests, you can use `send_message` to interact with remote agents to take action.
+- When you answer based on your own knowledge instead of delegating to a remote agent, you MUST prepend your response with: "[Self-answered because no remote agent is available]"
+- When there are remote agents but none of them can handle a specific sub-task and you answer based on your own knowledge, you MUST prepend your response for that sub-task with: "[Self-answered because no remote agent can handle this sub-task: xxx]"
 
 Be sure to include the remote agent name when you respond to the user.
 
