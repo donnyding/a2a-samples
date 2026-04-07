@@ -1,6 +1,7 @@
 import uuid
 
 import mesop as me
+from mesop.components.input.input import Shortcut
 
 from a2a.types import Message, Part, Role, TextPart
 from state.host_agent_service import (
@@ -23,7 +24,7 @@ class PageState:
 
 
 def on_blur(e: me.InputBlurEvent):
-    """Input handler"""
+    """Input handler - updates message content on blur"""
     state = me.state(PageState)
     state.message_content = e.value
 
@@ -64,16 +65,17 @@ async def send_message(message: str, message_id: str = ''):
     await SendMessage(request)
 
 
-async def send_message_enter(e: me.InputEnterEvent):  # pylint: disable=unused-argument
+async def send_message_enter(e: me.TextareaShortcutEvent):  # pylint: disable=unused-argument
     """Send message handler"""
     yield
     state = me.state(PageState)
-    state.message_content = e.value
     app_state = me.state(AppState)
+    # Use value from event if available, otherwise fall back to state
+    message_text = e.value if hasattr(e, 'value') and e.value else state.message_content
     message_id = str(uuid.uuid4())
     app_state.background_tasks[message_id] = ''
     yield
-    await send_message(state.message_content, message_id)
+    await send_message(message_text, message_id)
     yield
 
 
@@ -128,10 +130,13 @@ def conversation():
                 width='100%',
             )
         ):
-            me.input(
+            me.textarea(
                 label='How can I help you?',
                 on_blur=on_blur,
-                on_enter=send_message_enter,
+                rows=2,
+                shortcuts={
+                    Shortcut(key='Enter', shift=False, ctrl=False, alt=False, meta=False): send_message_enter,
+                },
                 style=me.Style(min_width='80vw'),
             )
             with me.content_button(

@@ -82,6 +82,7 @@ class AppState:
     task_list: list[SessionTask] = dataclasses.field(default_factory=list)
     background_tasks: dict[str, str] = dataclasses.field(default_factory=dict)
     message_aliases: dict[str, str] = dataclasses.field(default_factory=dict)
+    thought_expanded: list[str] = dataclasses.field(default_factory=list)
     # This is used to track the data entered in a form
     completed_forms: dict[str, dict[str, Any] | None] = dataclasses.field(
         default_factory=dict
