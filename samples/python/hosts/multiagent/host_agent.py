@@ -6,6 +6,9 @@ import uuid
 
 import httpx
 import litellm
+import os
+if os.environ.get('LITELLM_DEBUG', '').lower() == 'true':
+    litellm._turn_on_debug()
 
 from a2a.client import A2ACardResolver, ClientConfig, ClientFactory
 from a2a.types import (
