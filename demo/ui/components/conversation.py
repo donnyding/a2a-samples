@@ -1,3 +1,4 @@
+import os
 import uuid
 
 import mesop as me
@@ -135,7 +136,13 @@ def conversation():
                 on_blur=on_blur,
                 rows=2,
                 shortcuts={
-                    Shortcut(key='Enter', shift=False, ctrl=False, alt=False, meta=False): send_message_enter,
+                    Shortcut(
+                        key='Enter',
+                        ctrl=os.environ.get('A2A_SEND_KEY', 'ctrl') == 'ctrl',
+                        shift=False,
+                        alt=False,
+                        meta=os.environ.get('A2A_SEND_KEY', 'ctrl') == 'cmd',
+                    ): send_message_enter,
                 },
                 style=me.Style(min_width='80vw'),
             )

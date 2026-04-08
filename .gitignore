@@ -183,3 +183,6 @@ Thumbs.db
 .aidy/
 
 .ruff_cache
+
+# Claude Code
+.claude/
